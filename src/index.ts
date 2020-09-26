@@ -1,4 +1,4 @@
 
-import Init from '../src/Controls/initializesController/initializesController'
+import Init from './Controls/InitializesController/InitializesController'
 import '../src/componentsLibrary.css'
 Init();

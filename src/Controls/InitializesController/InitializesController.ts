@@ -1,5 +1,8 @@
 import * as PIXI from 'pixi.js';
-
+/**
+ * Инициализирующий модуль
+ * Created by Nortren
+ */
 export default function Init() {
     const optionsApplication = {
         width: 1280,
