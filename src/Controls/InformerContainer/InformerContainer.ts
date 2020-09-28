@@ -69,9 +69,9 @@ export default class InformerContainer {
         for (let i = 0; i < count; i++) {
             this.uploadAuxiliaryUI(280, 27, 460, 345 + step * i, texturePack.midleader_name_plate);
             this.uploadAuxiliaryUI(110, 27, 760, 345 + step * i, texturePack.midleader_scores_plate);
-            this.createText(430, 345 + step * i, `${i + 4}`, 'Arial', 24, 0xffffff, 'right', 700);
-            this.createText(470, 345 + step * i, `testName_${i}`, 'Arial', 23, 0x343434, 'center', 700);
-            this.createText(790, 345 + step * i, '100', 'Arial', 23, 0x343434, 'center', 700);
+            this.createText(430, 345 + step * i, `${i + 4}`, null, 24, 0xffffff, 'right', 700);
+            this.createText(470, 345 + step * i, `testName_${i}`, null, 23, 0x343434, 'center', 700);
+            this.createText(790, 345 + step * i, '100', null, 23, 0x343434, 'center', 700);
         }
     }
 
@@ -104,8 +104,9 @@ export default class InformerContainer {
     /**
      * Метод создания текстовых данных
      */
-    public createText(positionX, positionY, textValue: string, fontFamily: string, fontSize: number, fill: number, align?: string, fontWeight?: string | number): PIXI.Text {
+    public createText(positionX, positionY, textValue: string, fontFamily: string | null, fontSize: number, fill: number, align?: string, fontWeight?: string | number): PIXI.Text {
         align = align ? align : 'center';
+        fontFamily = fontFamily ? fontFamily : 'ZubiloBlack';
         let text = new PIXI.Text(textValue, {
             fontFamily,
             fontSize,
@@ -128,7 +129,7 @@ export default class InformerContainer {
      */
     public dataSwitch(width: number, height: number, texture: ITexturePack, textArray: string[]): void {
         let countData = 0;
-        let switcjText = this.createText(570, 135, textArray[countData], 'Arial', 40, 0xFF6801, 'center', 700);
+        let switcjText = this.createText(570, 135, textArray[countData], null, 40, 0xFF6801, 'center', 700);
         const selectDataPeriodPlus = () => {
             countData++;
             if (countData === textArray.length) {
@@ -156,7 +157,7 @@ export default class InformerContainer {
      */
     public createHeaderInfo(headerText: string, headerTexture: PIXI.Texture): void {
         this.uploadAuxiliaryUI(390, 60, 443, 60, headerTexture);
-        this.createText(520, 65, headerText, 'Arial', 40, 0x003D71, 'center', 700);
+        this.createText(520, 65, headerText, null, 40, 0x003D71, 'center', 700);
     }
 
     /**
@@ -167,11 +168,11 @@ export default class InformerContainer {
      * @param distanceCount
      */
     public createFinalResult(mainResult: number, coin: PIXI.Texture, coinCount: number, distance: PIXI.Texture, distanceCount: number): void {
-        this.createText(550, 150, mainResult.toString(), 'Arial', 90, 0x00CC00, 'center', 700);
+        this.createText(550, 150, mainResult.toString(), null, 90, 0x00CC00, 'center', 700);
         this.uploadAuxiliaryUI(65, 60, 454, 287, coin);
-        this.createText(580, 295, coinCount.toString(), 'Arial', 60, 0xF4AD25, 'center', 700);
+        this.createText(580, 295, coinCount.toString(), null, 60, 0xF4AD25, 'center', 700);
         this.uploadAuxiliaryUI(80, 76, 443, 396, distance);
-        this.createText(580, 405, `${distanceCount} m`, 'Arial', 60, 0x9AC6FF, 'center', 700);
+        this.createText(580, 405, `${distanceCount} m`, null, 60, 0x9AC6FF, 'center', 700);
     }
 
     public createLeaderBoardsResult(leaderBoardsContainerTexture: ITexturePack): void {
@@ -197,8 +198,8 @@ export default class InformerContainer {
     private _createTopThree(placeTexture: PIXI.Texture, scorePlate: PIXI.Texture, positionYPlace: number, positionYScore: number, playerResult: IPlayerResult): void {
         this.uploadAuxiliaryUI(333, 53, 407, positionYPlace, placeTexture);
         this.uploadAuxiliaryUI(120, 33, 753, positionYScore, scorePlate);
-        this.createText(460, positionYPlace + 10, playerResult.name, 'Arial', 25, playerResult.color, 'center', 700);
-        this.createText(790, positionYScore, playerResult.score.toString(), 'Arial', 25, playerResult.color, 'center', 700);
+        this.createText(460, positionYPlace + 10, playerResult.name, null, 25, playerResult.color, 'center', 700);
+        this.createText(790, positionYScore, playerResult.score.toString(), null, 25, playerResult.color, 'center', 700);
     }
 
     /**
