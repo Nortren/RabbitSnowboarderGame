@@ -26,18 +26,18 @@ export default class InitializesController {
         };
 
         this.app = new PIXI.Application(optionsApplication);
-        document.body.appendChild(this.app .view);
+        document.body.appendChild(this.app.view);
 
         this._preparingDataDorUploading().load((loader, resources) => {
 
-            const rootContainerCenterX = this.app .renderer.width / 2;
-            const rootContainerCenterY = this.app .renderer.height / 2;
+            const rootContainerCenterX = this.app.renderer.width / 2;
+            const rootContainerCenterY = this.app.renderer.height / 2;
 
             this._activeContainer = this._createIntroContainer(rootContainerCenterX, rootContainerCenterY, resources);
-            this.app .stage.addChild(this._activeContainer);
+            this.app.stage.addChild(this._activeContainer);
 
 
-            this._testingProgressBarBunny(resources);
+            // this._testingProgressBarBunny(resources);
         });
 
     }
@@ -82,14 +82,24 @@ export default class InitializesController {
             this.app.stage.addChild(this._activeContainer);
         };
 
+        /**
+         * TODO временно для показа работы всех контейнеров
+         * Функция отображения контейнера завершения игры
+         */
+        const finalContainer = () => {
+            this.app.stage.removeChild(this._activeContainer);
+            this._activeContainer = this._createFinalContainer(rootContainerCenterX, rootContainerCenterY, resources);
+            this.app.stage.addChild(this._activeContainer);
+        };
+
         const introContainerSettings = this._setContainerOptions(500, 610, rootContainerCenterX, rootContainerCenterY, introContainerTexture);
         const introContainer = new InformerContainer(introContainerSettings);
 
         introContainer.uploadAuxiliaryButton(215, 125, 640, 500, introContainerTexture.play_button);
         introContainer.uploadAuxiliaryButton(215, 125, 420, 500, introContainerTexture.leadboard, false, showLeadBoardContainer.bind(this));
-        introContainer.uploadAuxiliaryButton(215, 125, 535, 260, introContainerTexture.login_button);
+        introContainer.uploadAuxiliaryButton(215, 125, 535, 260, introContainerTexture.login_button, false, finalContainer.bind(this));
         introContainer.uploadAuxiliaryUI(400, 70, 440, 400, introContainerTexture.user_name_bar);
-        introContainer.uploadAuxiliaryUI(390, 60, 443, 60, introContainerTexture.header_info_plate);
+        introContainer.createHeaderInfo('You Record:', introContainerTexture.header_info_plate);
 
 
         return introContainer.getContainer();
@@ -115,13 +125,21 @@ export default class InitializesController {
             header_info_plate: resources.header_info_plate.texture,
         };
 
+        /**
+         * Функция переключения на контейнер с результатами игр
+         */
+        const showIntroContainer = () => {
+            this.app.stage.removeChild(this._activeContainer);
+            this._activeContainer = this._createIntroContainer(rootContainerCenterX, rootContainerCenterY, resources);
+            this.app.stage.addChild(this._activeContainer);
+        };
+
         const finalContainerContainerSettings = this._setContainerOptions(500, 610, rootContainerCenterX, rootContainerCenterY, finalContainerTexture);
         const finalContainer = new InformerContainer(finalContainerContainerSettings);
 
-        finalContainer.uploadAuxiliaryButton(145, 91, 565, 560, finalContainerTexture.ok_button);
-        finalContainer.uploadAuxiliaryUI(65, 60, 454, 287, finalContainerTexture.collect_coin_icon);
-        finalContainer.uploadAuxiliaryUI(80, 76, 443, 396, finalContainerTexture.collect_distance_icon);
-        finalContainer.uploadAuxiliaryUI(390, 60, 443, 60, finalContainerTexture.header_info_plate);
+        finalContainer.uploadAuxiliaryButton(145, 91, 565, 560, finalContainerTexture.ok_button, false, showIntroContainer.bind(this));
+        finalContainer.createFinalResult(999, finalContainerTexture.collect_coin_icon, 150, finalContainerTexture.collect_distance_icon, 300);
+        finalContainer.createHeaderInfo('You Score:', finalContainerTexture.header_info_plate);
 
         return finalContainer.getContainer();
     }
@@ -165,24 +183,12 @@ export default class InitializesController {
         const leaderBoardsContainerSettings = this._setContainerOptions(500, 610, rootContainerCenterX, rootContainerCenterY, leaderBoardsContainerTexture);
         const leaderBoards = new InformerContainer(leaderBoardsContainerSettings);
 
-        leaderBoards.uploadAuxiliaryButton(145, 91, 565, 560, leaderBoardsContainerTexture.ok_button,false,showIntroContainer.bind(this));
-        /*  leaderBoards.uploadAuxiliaryButton(35, 45, 470, 135, leaderBoardsContainerTexture.arrow_btn, true);
-         leaderBoards.uploadAuxiliaryButton(35, 45, 800, 135, leaderBoardsContainerTexture.arrow_btn);*/
-
+        leaderBoards.uploadAuxiliaryButton(145, 91, 565, 560, leaderBoardsContainerTexture.ok_button, false, showIntroContainer.bind(this));
         leaderBoards.dataSwitch(35, 45, leaderBoardsContainerTexture.arrow_btn, ['All Time', 'Week', 'Month']);
 
-        leaderBoards.uploadAuxiliaryUI(333, 53, 407, 180, leaderBoardsContainerTexture.place_1);
-        leaderBoards.uploadAuxiliaryUI(333, 53, 407, 233, leaderBoardsContainerTexture.place_2);
-        leaderBoards.uploadAuxiliaryUI(333, 53, 407, 287, leaderBoardsContainerTexture.place_3);
-        leaderBoards.uploadAuxiliaryUI(120, 33, 753, 190, leaderBoardsContainerTexture.highleader_scores_plate);
-        leaderBoards.uploadAuxiliaryUI(120, 33, 753, 245, leaderBoardsContainerTexture.highleader_scores_plate);
-        leaderBoards.uploadAuxiliaryUI(120, 33, 753, 296, leaderBoardsContainerTexture.highleader_scores_plate);
+        leaderBoards.createLeaderBoardsResult(leaderBoardsContainerTexture);
 
-        leaderBoards.createScoreList(leaderBoardsContainerTexture, 7, 31);
-
-        leaderBoards.uploadAuxiliaryUI(390, 60, 443, 60, leaderBoardsContainerTexture.header_info_plate);
-
-        leaderBoards.createText(515, 60, 'Leaderboard:', 'Arial', 40, 0x064274, 'center', 700);
+        leaderBoards.createHeaderInfo('Leaderboard:', leaderBoardsContainerTexture.header_info_plate);
 
         return leaderBoards.getContainer();
     }
@@ -247,11 +253,12 @@ export default class InitializesController {
     }
 
     /**
+     * TODO для тестирования
      * Метод запуска стартового примера из документации PIXI.js
      * @param app
      * @param resources
      */
-    private _testingProgressBarBunny(resources) {
+    private _testingProgressBarBunny(resources): void {
         // This creates a texture from a 'bunny.png' image
         const bunny = new PIXI.Sprite(resources.bunny.texture);
 
