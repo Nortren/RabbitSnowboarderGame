@@ -2,7 +2,7 @@
 
 
 ___
-![](readme/preview.gif) 
+![](readme/preview_new.gif) 
 ___
 ## Задание:
 По ссылке вы можете ознакомиться с примером [Игры-Референс](https://mi-bunny-ride-test.web.app/game/) . Задание состоит в следующем: вам необходимо самостоятельно повторить реализацию UI проекта на pixi.js+webpack и javascript/typescript (на ваше усмотрение).
