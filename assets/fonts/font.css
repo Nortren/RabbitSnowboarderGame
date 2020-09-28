@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'ZubiloBlack';
+  src: url('ZubiloBlack.woff') format('woff'),
+       url('ZubiloBlack.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
