@@ -13,6 +13,7 @@ interface ITexturePack {
     off?: PIXI.Texture;
     midleader_scores_plate?: PIXI.Texture;
     midleader_name_plate?: PIXI.Texture;
+    highleader_scores_plate?: PIXI.Texture;
     info_plate_big?: PIXI.Texture;
     texture?: PIXI.Texture;
 }
@@ -24,7 +25,7 @@ interface IPlayerResult {
 }
 
 interface IOptions {
-    texture: PIXI.Texture;
+    texture?: PIXI.Texture;
     width: number;
     height: number;
     positionX: number;
@@ -238,4 +239,72 @@ export default class InformerContainer {
     public getContainer() {
         return this.container;
     }
+
+
+    /**
+     * Метод параметризации и запуска анимации рекорда
+     */
+    animationRayStart(texture: PIXI.Texture, app: PIXI.Aplication, center: object): void {
+        this.animationRotation(texture.rays, 0.01, app, {
+            positionX: center.centerX,
+            positionY: center.centerY,
+            width: 10,
+            height: 10
+        }, true);
+
+        const arrayStarsParams = [
+            {positionX: 300, positionY: 150, width: 100, height: 100},
+            {positionX: 280, positionY: 300, width: 80, height: 80},
+            {positionX: 240, positionY: 450, width: 130, height: 130},
+            {positionX: 310, positionY: 600, width: 100, height: 100},
+            {positionX: 980, positionY: 140, width: 100, height: 100},
+            {positionX: 1000, positionY: 290, width: 130, height: 130},
+            {positionX: 1000, positionY: 450, width: 90, height: 90},
+            {positionX: 980, positionY: 600, width: 100, height: 100}
+        ];
+
+        arrayStarsParams.forEach((star) => {
+            this.animationRotation(texture.star, 0.01, app, {
+                positionX: star.positionX,
+                positionY: star.positionY,
+                width: star.width,
+                height: star.height
+            });
+        });
+    }
+
+    /**
+     * Метод анимации вращения переданой текстуры
+     * @param texture
+     * @param step
+     */
+    private animationRotation(texture: PIXI.Texture, step: number, app: PIXI.Aplication, options: IOptions, scale: boolean): void {
+        let sprite = new PIXI.Sprite(texture);
+        sprite.x = options.positionX;
+        sprite.y = options.positionY;
+        sprite.width = options.width;
+        sprite.height = options.height;
+        sprite.anchor.set(0.5);
+        app.stage.addChild(sprite);
+        let count = 0.6;
+        let steTest = 0.0005;
+        app.ticker.add((a, b, c) => {
+            if (scale) {
+                if (count > 0.8) {
+                    steTest = -0.0005;
+                }
+                if (count < 0.6) {
+                    steTest = 0.0005;
+                }
+                count += steTest;
+                sprite.scale.x = count;
+                sprite.scale.y = count;
+            }
+
+// count = this._changeState(0.75,0.5,0.005,count);
+
+            sprite.rotation += step;
+        });
+    }
 }
+
