@@ -23,6 +23,12 @@ interface IPlayerResult {
     score: number;
     color: number
 }
+interface IDropShadow{
+    dropShadow: boolean;
+    dropShadowAngle: number;
+    dropShadowBlur: number;
+    dropShadowColor: number;
+}
 
 interface IOptions {
     texture?: PIXI.Texture;
@@ -30,6 +36,12 @@ interface IOptions {
     height: number;
     positionX: number;
     positionY: number;
+    animation?: IAnimation
+}
+interface IAnimation {
+    scale: { startPositionRotation: number; endPositionRotation: number; animationSpeed: number };
+    rotation: { animationSpeed: number };
+    cyclicRotation: { startPositionRotation: number; endPositionRotation: number; animationSpeed: number };
 }
 
 export default class InformerContainer {
@@ -105,15 +117,16 @@ export default class InformerContainer {
     /**
      * Метод создания текстовых данных
      */
-    public createText(positionX, positionY, textValue: string, fontFamily: string | null, fontSize: number, fill: number, align?: string, fontWeight?: string | number): PIXI.Text {
+    public createText(positionX, positionY, textValue: string, fontFamily: string | null, fontSize: number, fill: number, align?: string, fontWeight?: string | number, dropShadow?: IDropShadow): PIXI.Text {
         align = align ? align : 'center';
         fontFamily = fontFamily ? fontFamily : 'ZubiloBlack';
         let text = new PIXI.Text(textValue, {
+            ...dropShadow,
             fontFamily,
             fontSize,
             fill,
             align,
-            fontWeight
+            fontWeight,
         });
         text.x = positionX;
         text.y = positionY;
@@ -130,13 +143,19 @@ export default class InformerContainer {
      */
     public dataSwitch(width: number, height: number, texture: ITexturePack, textArray: string[]): void {
         let countData = 0;
-        let switcjText = this.createText(570, 135, textArray[countData], null, 40, 0xFF6801, 'center', 700);
+        const dropShadow = {
+            dropShadow: true,
+            dropShadowAngle: 1,
+            dropShadowBlur: 3,
+            dropShadowColor: 0x003a6d
+        };
+        let switchText = this.createText(570, 135, textArray[countData], null, 40, 0xFF6801, 'center', 700,dropShadow);
         const selectDataPeriodPlus = () => {
             countData++;
             if (countData === textArray.length) {
                 countData = 0;
             }
-            switcjText.text = textArray[countData];
+            switchText.text = textArray[countData];
 
         };
 
@@ -145,7 +164,7 @@ export default class InformerContainer {
             if (countData < 0) {
                 countData = textArray.length - 1;
             }
-            switcjText.text = textArray[countData];
+            switchText.text = textArray[countData];
 
         };
 
@@ -169,11 +188,17 @@ export default class InformerContainer {
      * @param distanceCount
      */
     public createFinalResult(mainResult: number, coin: PIXI.Texture, coinCount: number, distance: PIXI.Texture, distanceCount: number): void {
-        this.createText(550, 150, mainResult.toString(), null, 90, 0x00CC00, 'center', 700);
+        const dropShadow = {
+            dropShadow: true,
+            dropShadowAngle: 1,
+            dropShadowBlur: 3,
+            dropShadowColor: 0x003a6d
+        };
+        this.createText(550, 150, mainResult.toString(), null, 130, 0x00CC00, 'center', 700, dropShadow);
         this.uploadAuxiliaryUI(65, 60, 454, 287, coin);
-        this.createText(580, 295, coinCount.toString(), null, 60, 0xF4AD25, 'center', 700);
+        this.createText(580, 295, coinCount.toString(), null, 60, 0xF4AD25, 'center', 700, dropShadow);
         this.uploadAuxiliaryUI(80, 76, 443, 396, distance);
-        this.createText(580, 405, `${distanceCount} m`, null, 60, 0x9AC6FF, 'center', 700);
+        this.createText(580, 405, `${distanceCount} m`, null, 60, 0x9AC6FF, 'center', 700, dropShadow);
     }
 
     public createLeaderBoardsResult(leaderBoardsContainerTexture: ITexturePack): void {
@@ -245,40 +270,136 @@ export default class InformerContainer {
      * Метод параметризации и запуска анимации рекорда
      */
     animationRayStart(texture: PIXI.Texture, app: PIXI.Aplication, center: object): void {
-        this.animationRotation(texture.rays, 0.01, app, {
+        this._animationRotation(texture.rays, app, {
             positionX: center.centerX,
             positionY: center.centerY,
             width: 10,
-            height: 10
-        }, true);
+            height: 10,
+            animation: {
+                scale: {startPositionScale: 0.7, endPositionScale: 0.8, animationSpeed: 0.001},
+                rotation: {animationSpeed: 0.01},
+                cyclicRotation: false
+            }
+        });
 
         const arrayStarsParams = [
-            {positionX: 300, positionY: 150, width: 100, height: 100},
-            {positionX: 280, positionY: 300, width: 80, height: 80},
-            {positionX: 240, positionY: 450, width: 130, height: 130},
-            {positionX: 310, positionY: 600, width: 100, height: 100},
-            {positionX: 980, positionY: 140, width: 100, height: 100},
-            {positionX: 1000, positionY: 290, width: 130, height: 130},
-            {positionX: 1000, positionY: 450, width: 90, height: 90},
-            {positionX: 980, positionY: 600, width: 100, height: 100}
+            {
+                positionX: 300,
+                positionY: 150,
+                width: 100,
+                height: 100,
+                animation: {
+                    scale: false,
+                    rotation: false,
+                    cyclicRotation: {startPositionRotation: 0, endPositionRotation: 0.6, animationSpeed: 0.005}
+                }
+            },
+            {
+                positionX: 280,
+                positionY: 300,
+                width: 60,
+                height: 60,
+                animation: {
+                    scale: false,
+                    rotation: false,
+                    cyclicRotation: {startPositionRotation: 0, endPositionRotation: 0.4, animationSpeed: 0.005}
+                }
+            },
+            {
+                positionX: 240,
+                positionY: 450,
+                width: 140,
+                height: 140,
+                animation: {
+                    scale: false,
+                    rotation: false,
+                    cyclicRotation: {startPositionRotation: 0, endPositionRotation: 0.5, animationSpeed: 0.005}
+                }
+            },
+            {
+                positionX: 310,
+                positionY: 600,
+                width: 100,
+                height: 100,
+                animation: {
+                    scale: false,
+                    rotation: false,
+                    cyclicRotation: {startPositionRotation: 0, endPositionRotation: 0.7, animationSpeed: 0.005}
+                }
+            },
+            {
+                positionX: 980,
+                positionY: 140,
+                width: 100,
+                height: 100,
+                animation: {
+                    scale: false,
+                    rotation: false,
+                    cyclicRotation: {startPositionRotation: 0, endPositionRotation: 0.6, animationSpeed: 0.005}
+                }
+            },
+            {
+                positionX: 1000,
+                positionY: 290,
+                width: 140,
+                height: 140,
+                animation: {
+                    scale: false,
+                    rotation: false,
+                    cyclicRotation: {startPositionRotation: 0, endPositionRotation: 0.4, animationSpeed: 0.005}
+                }
+            },
+            {
+                positionX: 1000,
+                positionY: 450,
+                width: 90,
+                height: 90,
+                animation: {
+                    scale: false,
+                    rotation: false,
+                    cyclicRotation: {startPositionRotation: 0, endPositionRotation: 0.5, animationSpeed: 0.005}
+                }
+            },
+            {
+                positionX: 980,
+                positionY: 600,
+                width: 100,
+                height: 100,
+                animation: {
+                    scale: false,
+                    rotation: false,
+                    cyclicRotation: {startPositionRotation: 0, endPositionRotation: 0.7, animationSpeed: 0.005}
+                }
+            }
         ];
 
         arrayStarsParams.forEach((star) => {
-            this.animationRotation(texture.star, 0.01, app, {
+            this._animationRotation(texture.star, app, {
                 positionX: star.positionX,
                 positionY: star.positionY,
                 width: star.width,
-                height: star.height
+                height: star.height,
+                animation: star.animation
             });
         });
     }
 
     /**
-     * Метод анимации вращения переданой текстуры
+     * Метод зупуска набора заданных анимаций
      * @param texture
-     * @param step
+     * @param app
+     * @param options
+     * @private
      */
-    private animationRotation(texture: PIXI.Texture, step: number, app: PIXI.Aplication, options: IOptions, scale: boolean): void {
+    private _animationRotation(texture: PIXI.Texture, app: PIXI.Aplication, options: IOptions): void {
+        const optionsAnimation = options.animation;
+        const scaleAnimation = optionsAnimation.scale;
+        const cyclicRotationAnimation = optionsAnimation.cyclicRotation;
+        const rotationAnimation = optionsAnimation.rotation;
+        const scaleSpeed = scaleAnimation.animationSpeed;
+        const cyclicRotationSpeed = cyclicRotationAnimation.animationSpeed;
+        const rotationSpeed = rotationAnimation.animationSpeed;
+
         let sprite = new PIXI.Sprite(texture);
         sprite.x = options.positionX;
         sprite.y = options.positionY;
@@ -286,25 +407,66 @@ export default class InformerContainer {
         sprite.height = options.height;
         sprite.anchor.set(0.5);
         app.stage.addChild(sprite);
-        let count = 0.6;
-        let steTest = 0.0005;
-        app.ticker.add((a, b, c) => {
-            if (scale) {
-                if (count > 0.8) {
-                    steTest = -0.0005;
-                }
-                if (count < 0.6) {
-                    steTest = 0.0005;
-                }
-                count += steTest;
-                sprite.scale.x = count;
-                sprite.scale.y = count;
+
+
+        let countScale = scaleAnimation.startPositionScale;
+        let countCyclicRotation = cyclicRotationAnimation.startPositionRotation;
+        let countRotation = 0;
+
+        let stepAnimationScale = scaleAnimation ? scaleSpeed : 0;
+        let stepAnimationRotation = rotationAnimation ? rotationSpeed : 0;
+        let stepAnimationCyclicRotation = cyclicRotationAnimation ? cyclicRotationSpeed : 0;
+        app.ticker.add(() => {
+
+            if (scaleAnimation) {
+                stepAnimationScale = this._changeState(scaleAnimation.startPositionScale,
+                    scaleAnimation.endPositionScale,
+                    scaleSpeed,
+                    stepAnimationScale,
+                    countScale);
+                countScale += stepAnimationScale;
+                sprite.scale.x = countScale;
+                sprite.scale.y = countScale;
             }
 
-// count = this._changeState(0.75,0.5,0.005,count);
+            if (cyclicRotationAnimation) {
+                stepAnimationCyclicRotation = this._changeState(cyclicRotationAnimation.startPositionRotation,
+                    cyclicRotationAnimation.endPositionRotation,
+                    cyclicRotationSpeed,
+                    stepAnimationCyclicRotation,
+                    countCyclicRotation);
+                countCyclicRotation += stepAnimationCyclicRotation;
+                sprite.rotation = countCyclicRotation;
+            }
 
-            sprite.rotation += step;
+            if (rotationAnimation) {
+                stepAnimationRotation = rotationSpeed;
+                countRotation += stepAnimationRotation;
+                sprite.rotation = countRotation;
+            }
         });
+    }
+
+    /**
+     *  Метод позволяющий циклично двигаться в заданном диапазоне значений
+     * (от меньшего к большему и обратно с заданым шагом)
+     * @param rangeFrom
+     * @param rangeTo
+     * @param animationSpeed
+     * @param stepResult
+     * @param count
+     * @returns {number}
+     * @private
+     */
+    private _changeState(rangeFrom: number, rangeTo: number, animationSpeed: number, stepResult: number, count): number {
+        if (count > rangeTo) {
+            stepResult = -animationSpeed;
+        }
+        if (count < rangeFrom) {
+            stepResult = animationSpeed;
+        }
+        return stepResult;
+
     }
 }
 
