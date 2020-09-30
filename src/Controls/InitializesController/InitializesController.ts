@@ -30,14 +30,13 @@ export default class InitializesController {
 
         this._preparingDataDorUploading().load((loader, resources) => {
 
-            const rootContainerCenterX = this.app.renderer.width / 2;
-            const rootContainerCenterY = this.app.renderer.height / 2;
+            this.rootContainerCenterX = this.app.renderer.width / 2;
+            this.rootContainerCenterY = this.app.renderer.height / 2;
 
-            this._activeContainer = this._createIntroContainer(rootContainerCenterX, rootContainerCenterY, resources);
+            this.canvasCenter = {centerX: this.rootContainerCenterX, centerY: this.rootContainerCenterY};
+
+            this._activeContainer = this._createIntroContainer(this.rootContainerCenterX, this.rootContainerCenterY, resources);
             this.app.stage.addChild(this._activeContainer);
-
-
-            // this._testingProgressBarBunny(resources);
         });
 
     }
@@ -123,6 +122,8 @@ export default class InitializesController {
             collect_coin_icon: resources.collect_coin_icon.texture,
             collect_distance_icon: resources.collect_distance_icon.texture,
             header_info_plate: resources.header_info_plate.texture,
+            rays: resources.rays.texture,
+            star: resources.star.texture,
         };
 
         /**
@@ -140,6 +141,21 @@ export default class InitializesController {
         finalContainer.uploadAuxiliaryButton(145, 91, 565, 560, finalContainerTexture.ok_button, false, showIntroContainer.bind(this));
         finalContainer.createFinalResult(999, finalContainerTexture.collect_coin_icon, 150, finalContainerTexture.collect_distance_icon, 300);
         finalContainer.createHeaderInfo('You Score:', finalContainerTexture.header_info_plate);
+        finalContainer.animationRayStart(finalContainerTexture,this.app,this.canvasCenter);
+
+
+    /*    finalContainer.animationRotation(finalContainerTexture.rays, 0.01, this.app, {positionX: this.rootContainerCenterX,positionY:rootContainerCenterY,width:10,height:10},true);
+
+        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 300,positionY:150,width:100,height:10});
+        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 280,positionY:300,width:10,height:10});
+        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 240,positionY:450,width:10,height:10});
+        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 310,positionY:600,width:10,height:10});
+
+        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 980,positionY:140,width:10,height:10});
+        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 1000,positionY:290,width:10,height:10});
+        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 1000,positionY:450,width:10,height:10});
+        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 980,positionY:600,width:10,height:10});*/
+
 
         return finalContainer.getContainer();
     }
@@ -228,6 +244,8 @@ export default class InitializesController {
             {name: 'arrow_btn_active', path: 'assets/ui/arrow_btn_active.png'},
             {name: 'arrow_btn_hover', path: 'assets/ui/arrow_btn_hover.png'},
             {name: 'arrow_btn_press', path: 'assets/ui/arrow_btn_press.png'},
+            {name: 'rays', path: 'assets/ui/rays.png'},
+            {name: 'star', path: 'assets/ui/star.png'},
         ];
         let resultArray;
         DATA_SRC.forEach((item) => {
@@ -251,35 +269,4 @@ export default class InitializesController {
         return {width, height, positionX, positionY, texture: mainTexture};
 
     }
-
-    /**
-     * TODO для тестирования
-     * Метод запуска стартового примера из документации PIXI.js
-     * @param app
-     * @param resources
-     */
-    private _testingProgressBarBunny(resources): void {
-        // This creates a texture from a 'bunny.png' image
-        const bunny = new PIXI.Sprite(resources.bunny.texture);
-
-// Setup the position of the bunny
-        bunny.x = 1230;
-        bunny.y = 30;
-
-// Rotate around the center
-        bunny.anchor.x = 0.1;
-        bunny.anchor.y = 0.5;
-
-// Add the bunny to the scene we are building
-        this.app.stage.addChild(bunny);
-
-// Listen for frame updates
-        this.app.ticker.add(() => {
-            // each frame we spin the bunny around a bit
-            bunny.rotation += 0.1;
-        });
-
-    }
-
 }
-
