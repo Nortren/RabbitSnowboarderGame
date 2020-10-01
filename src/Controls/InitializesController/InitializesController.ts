@@ -131,6 +131,7 @@ export default class InitializesController {
          */
         const showIntroContainer = () => {
             this.app.stage.removeChild(this._activeContainer);
+            this.app.stage.removeChildren();
             this._activeContainer = this._createIntroContainer(rootContainerCenterX, rootContainerCenterY, resources);
             this.app.stage.addChild(this._activeContainer);
         };
@@ -139,23 +140,9 @@ export default class InitializesController {
         const finalContainer = new InformerContainer(finalContainerContainerSettings);
 
         finalContainer.uploadAuxiliaryButton(145, 91, 565, 560, finalContainerTexture.ok_button, false, showIntroContainer.bind(this));
-        finalContainer.createFinalResult(999, finalContainerTexture.collect_coin_icon, 150, finalContainerTexture.collect_distance_icon, 300);
+        finalContainer.createFinalResult(55, finalContainerTexture.collect_coin_icon, 150, finalContainerTexture.collect_distance_icon, 300);
         finalContainer.createHeaderInfo('You Score:', finalContainerTexture.header_info_plate);
         finalContainer.animationRayStart(finalContainerTexture,this.app,this.canvasCenter);
-
-
-    /*    finalContainer.animationRotation(finalContainerTexture.rays, 0.01, this.app, {positionX: this.rootContainerCenterX,positionY:rootContainerCenterY,width:10,height:10},true);
-
-        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 300,positionY:150,width:100,height:10});
-        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 280,positionY:300,width:10,height:10});
-        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 240,positionY:450,width:10,height:10});
-        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 310,positionY:600,width:10,height:10});
-
-        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 980,positionY:140,width:10,height:10});
-        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 1000,positionY:290,width:10,height:10});
-        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 1000,positionY:450,width:10,height:10});
-        finalContainer.animationRotation(finalContainerTexture.star, 0.01, this.app, {positionX: 980,positionY:600,width:10,height:10});*/
-
 
         return finalContainer.getContainer();
     }
