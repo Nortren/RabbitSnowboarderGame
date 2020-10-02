@@ -51,8 +51,6 @@ export default class InformerContainer {
     public container: PIXI.Container = new PIXI.Container();
 
     constructor(options: IOptions) {
-
-
         this._loadContainerTexture(this.container, options);
     }
 

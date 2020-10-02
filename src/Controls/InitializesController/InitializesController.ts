@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import InformerContainer from '../InformerContainer/InformerContainer'
-
+import InformerContainer from '../InformerContainer/InformerContainer';
+import GameContainer from '../GameContainer/GameContainer';
 
 interface IContainerOptions {
     width: number;
@@ -35,12 +35,42 @@ export default class InitializesController {
 
             this.canvasCenter = {centerX: this.rootContainerCenterX, centerY: this.rootContainerCenterY};
 
-            this._activeContainer = this._createIntroContainer(this.rootContainerCenterX, this.rootContainerCenterY, resources);
+            // this._activeContainer = this._createIntroContainer(this.rootContainerCenterX, this.rootContainerCenterY, resources);
+            this._activeContainer = this._createGameContainer(this.rootContainerCenterX, this.rootContainerCenterY, resources);
             this.app.stage.addChild(this._activeContainer);
         });
 
     }
 
+    private _createGameContainer(rootContainerCenterX, rootContainerCenterY, resources): PIXI.Container {
+        const width = this.app.renderer.width;
+        const height = this.app.renderer.height;
+        const gameContainerTexture = {
+            staticObject: [
+                {width, height, positionX: 0, positionY: 0, texture: resources.street.texture},
+                {width: 500, height: 500, positionX: 0, positionY: 300, texture: resources.mountain.texture},
+                {width: 500, height: 500, positionX: 500, positionY: 300, texture: resources.mountain.texture},
+                {width: 500, height: 500, positionX: 800, positionY: 300, texture: resources.mountain.texture},
+                {width, height: 300, positionX: 0, positionY: 550, texture: resources.floor.texture, rotation: 0.1},
+                {width: 300, height: 300, positionX: 300, positionY: 50, texture: resources.sun.texture},
+            ],
+            dynamicObject: [
+                {width: 500, height: 500, positionX: 0, positionY: 300, texture: resources.jumpboard.texture},
+                {width: 500, height: 500, positionX: 500, positionY: 300, texture: resources.stopper_idle.texture},
+            ],
+            bunny: {
+                move: resources.bunny.texture,
+                jump: resources.bunny_jump.texture
+            },
+        };
+
+
+        const finalContainerContainerSettings = this._setContainerOptions(width, height, rootContainerCenterX, rootContainerCenterY, gameContainerTexture);
+        const gameContainer = new GameContainer(finalContainerContainerSettings);
+
+        // gameContainer._loadContainerTexture();
+        return gameContainer.getGameContainer();
+    }
 
     /**
      * Метод создания списка победителей
@@ -142,7 +172,7 @@ export default class InitializesController {
         finalContainer.uploadAuxiliaryButton(145, 91, 565, 560, finalContainerTexture.ok_button, false, showIntroContainer.bind(this));
         finalContainer.createFinalResult(55, finalContainerTexture.collect_coin_icon, 150, finalContainerTexture.collect_distance_icon, 300);
         finalContainer.createHeaderInfo('You Score:', finalContainerTexture.header_info_plate);
-        finalContainer.animationRayStart(finalContainerTexture,this.app,this.canvasCenter);
+        finalContainer.animationRayStart(finalContainerTexture, this.app, this.canvasCenter);
 
         return finalContainer.getContainer();
     }
@@ -233,6 +263,16 @@ export default class InitializesController {
             {name: 'arrow_btn_press', path: 'assets/ui/arrow_btn_press.png'},
             {name: 'rays', path: 'assets/ui/rays.png'},
             {name: 'star', path: 'assets/ui/star.png'},
+
+            {name: 'floor', path: 'assets/staticGameObject/floor.png'},
+            {name: 'sun', path: 'assets/staticGameObject/sun.png'},
+            {name: 'street', path: 'assets/staticGameObject/street.png'},
+            {name: 'mountain', path: 'assets/staticGameObject/mountain.png'},
+
+            {name: 'bunny_move', path: 'assets/dynamicGameObject/bunny_move.png'},
+            {name: 'bunny_jump', path: 'assets/dynamicGameObject/bunny_jump.png'},
+            {name: 'jumpboard', path: 'assets/dynamicGameObject/jumpboard.png'},
+            {name: 'stopper_idle', path: 'assets/dynamicGameObject/stopper_idle.png'},
         ];
         let resultArray;
         DATA_SRC.forEach((item) => {
