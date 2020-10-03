@@ -43,7 +43,7 @@ export default class InitializesController {
     }
 
     private _createGameContainer(rootContainerCenterX, rootContainerCenterY, resources): PIXI.Container {
-        const width = this.app.renderer.width;
+        const width = this.app.renderer.width;//1280
         const height = this.app.renderer.height;
         const gameContainerTexture = {
             staticObject: [
@@ -51,23 +51,31 @@ export default class InitializesController {
                 {width: 500, height: 500, positionX: 0, positionY: 300, texture: resources.mountain.texture},
                 {width: 500, height: 500, positionX: 500, positionY: 300, texture: resources.mountain.texture},
                 {width: 500, height: 500, positionX: 800, positionY: 300, texture: resources.mountain.texture},
-                {width, height: 300, positionX: 0, positionY: 550, texture: resources.floor.texture, rotation: 0.1},
+
                 {width: 300, height: 300, positionX: 300, positionY: 50, texture: resources.sun.texture},
             ],
             dynamicObject: [
-                {width: 500, height: 500, positionX: 0, positionY: 300, texture: resources.jumpboard.texture},
-                {width: 500, height: 500, positionX: 500, positionY: 300, texture: resources.stopper_idle.texture},
+                {width, height: 300, positionX: 0, positionY: 550, texture: resources.floor.texture, rotation: 0.1,type:'way'},
+                {width, height: 300, positionX: width, positionY: 678, texture: resources.floor.texture, rotation: 0.1,type:'way'},
+                {width: 500, height: 500, positionX: 0, positionY: 58, texture: resources.jumpboard.texture,rotation: 0.1,type:'singleObject'},
+                {width: 250, height: 150, positionX: 500, positionY: 58, texture: resources.airship.texture,rotation: 0.1,type:'singleObject'},
+                {width: 150, height: 100, positionX: width, positionY: height-95, texture: resources.stopper_idle.texture,rotation: 0.1,type:'pathElementCollider'},
+                // {width: 150, height: 100, positionX: width, positionY: height-95, texture: resources.stopper_crushed.texture,rotation: 0.1,type:'pathElementCollider'},
+                {width: 150, height: 100, positionX: width+750, positionY: 100, texture: resources.cloud_1.texture,rotation: 0.1,type:'pathElement'},
+                {width: 150, height: 100, positionX: width+450, positionY: 130, texture: resources.cloud_2.texture,rotation: 0.1,type:'pathElement'},
+                {width: 150, height: 100, positionX: width+850, positionY: 230, texture: resources.cloud_2.texture,rotation: 0.1,type:'pathElement'},
+                {width: 150, height: 100, positionX: width+100, positionY: 50, texture: resources.cloud_2.texture,rotation: 0.1,type:'pathElement'},
             ],
-            bunny: {
-                move: resources.bunny.texture,
-                jump: resources.bunny_jump.texture
-            },
+            bunny: [
+                {width: 150, height: 150, positionX: 30, positionY: 460,texture: resources.bunny_move.texture,type:'playerAvatar'},
+                {width: 150, height: 150, positionX: 0, positionY: 58,texture: resources.bunny_jump.texture,type:'playerAvatar'}
+            ],
         };
 
 
         const finalContainerContainerSettings = this._setContainerOptions(width, height, rootContainerCenterX, rootContainerCenterY, gameContainerTexture);
         const gameContainer = new GameContainer(finalContainerContainerSettings);
-
+        gameContainer.startMoveGameObject(this.app);
         // gameContainer._loadContainerTexture();
         return gameContainer.getGameContainer();
     }
@@ -273,6 +281,11 @@ export default class InitializesController {
             {name: 'bunny_jump', path: 'assets/dynamicGameObject/bunny_jump.png'},
             {name: 'jumpboard', path: 'assets/dynamicGameObject/jumpboard.png'},
             {name: 'stopper_idle', path: 'assets/dynamicGameObject/stopper_idle.png'},
+            {name: 'stopper_crushed', path: 'assets/dynamicGameObject/stopper_crushed.png'},
+            {name: 'airship', path: 'assets/dynamicGameObject/airship.png'},
+            {name: 'cloud_1', path: 'assets/dynamicGameObject/cloud_1.png'},
+            {name: 'cloud_2', path: 'assets/dynamicGameObject/cloud_2.png'},
+            {name: 'street_tree', path: 'assets/dynamicGameObject/street_tree.png'},
         ];
         let resultArray;
         DATA_SRC.forEach((item) => {
