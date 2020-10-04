@@ -32,12 +32,15 @@ export default class GameContainer {
     private _startGameSession(container: PIXI.Container, options: IOptions): void {
         const staticObject = options.texture.staticObject as ITexturePack;
         const dynamicObject = options.texture.dynamicObject as ITexturePack;
+        this.coin = options.texture.collect_coin_icon as ITexturePack;
         this._playerAvatarData = options.texture.bunny as ITexturePack;
 
 
         this._createStaticObject(staticObject);
 
         this._createDynamicObject(dynamicObject);
+
+
         document.addEventListener('keydown', this._bunnyJump.bind(this));
         document.addEventListener('keyup', this._bunnyJump.bind(this));
 
@@ -107,7 +110,8 @@ export default class GameContainer {
                 width: item.width,
                 height: item.height,
                 positionY: item.positionY,
-                type: item.type
+                type: item.type,
+                randomPosition: item.randomPosition ? item.randomPosition : false
             });
             this._addObjectToScene(dynamicObject);
         });
@@ -123,44 +127,39 @@ export default class GameContainer {
         let jumpCount = 0;
         const userAvatar = this.playerAvatar;
         const userData = this._playerAvatarData;
+        const countDistance = 0;
+        const counterCollectedCoins = 0;
         app.ticker.add(() => {
+            countDistance++;
             if (this._gameIsRunning) {
                 this._dynamicGameObject.forEach((dynamicObject) => {
                     const sprite = dynamicObject.sprite;
                     const type = dynamicObject.type;
-                    const appWidth = app.renderer.width ;
-                    const appHeight = app.renderer.height ;
-
-
+                    const appWidth = app.renderer.width;
                     const positionY = dynamicObject.positionY;
-                    if ((type === 'way') && (dynamicObject.width) <= Math.abs(sprite.x)) {
-                        sprite.x = appWidth;
-                        sprite.y = appHeight;
-                    }
-                    if ((type === 'pathElementCollider') && appWidth <= Math.abs(sprite.x)) {
-                        sprite.x = appWidth+this._randomPositionGenerator(0,150);
-                        sprite.y = positionY;
-                    }
-                    if ((type === 'pathElement') && appWidth <= Math.abs(sprite.x)) {
-                        sprite.x = appWidth+this._randomPositionGenerator(0,150);
-                        sprite.y = positionY+this._randomPositionGenerator(0,130);
-                    }
-                    if ((type === 'playerAvatar')) {
-                        sprite.x = appWidth;
-                        sprite.y = positionY;
-                    }
+
                     sprite.x -= 10;
                     sprite.y -= 1;
+
+                    this._calculatePosition(type, dynamicObject, sprite, app, positionY);
+
+                    if (type === 'coin') {
+                        let res = this._checkCollision(this.playerAvatar, sprite);
+                        if (res) {
+                            counterCollectedCoins++;
+                            sprite.x = appWidth + this._randomNumberGenerator(10, 500);
+                            sprite.y = positionY + this._randomNumberGenerator(0, 100);
+                        }
+                    }
 
                     if (type === 'pathElementCollider') {
                         let res = this._checkCollision(this.playerAvatar, sprite);
                         if (res) {
-                            this._gameIsRunning = false;
+                            this.gameEnd(countDistance, counterCollectedCoins);
                         }
                     }
 
                 });
-
 
                 if (this.playerJumped || !playerLanded) {
 
@@ -188,7 +187,70 @@ export default class GameContainer {
         });
     }
 
-    private _randomPositionGenerator(min, max){
+
+    /**
+     * Методрасчета позиции динамических элементов карты
+     * @param type
+     * @param dynamicObject
+     * @param sprite
+     * @param app
+     * @param positionY
+     * @private
+     */
+    private _calculatePosition(type: string, dynamicObject: PIXI.Sprite[], sprite: PIXI.Sprite, app: PIXI.Aplication, positionY: number): void {
+        const appWidth = app.renderer.width;
+        const appHeight = app.renderer.height;
+        if ((type === 'way') && (dynamicObject.width) <= Math.abs(sprite.x)) {
+            sprite.x = appWidth;
+            sprite.y = appHeight;
+        }
+        if ((type === 'pathElementCollider') && appWidth <= Math.abs(sprite.x)) {
+            sprite.x = appWidth - this._randomNumberGenerator(50, 150);
+            sprite.y = positionY;
+        }
+        if ((type === 'pathElement') && appWidth <= Math.abs(sprite.x)) {
+            if (dynamicObject.randomPosition) {
+                sprite.x = appWidth + this._randomNumberGenerator(0, 150);
+                sprite.y = positionY + this._randomNumberGenerator(0, 130);
+            } else {
+                sprite.x = appWidth;
+                sprite.y = positionY;
+            }
+        }
+        if ((type === 'coin') && appWidth <= Math.abs(sprite.x)) {
+
+            sprite.x = appWidth + this._randomNumberGenerator(0, 100);
+            sprite.y = positionY;
+        }
+        if ((type === 'playerAvatar')) {
+            sprite.x = appWidth;
+            sprite.y = positionY;
+        }
+    }
+
+    /**
+     * Метод завершения игры
+     */
+    public gameEnd(countDistance: number, counterCollectedCoins: number): void {
+        this._gameIsRunning = false;
+        const totalScore = Math.ceil(countDistance * counterCollectedCoins * 0.01);
+        const readFile = new CustomEvent('stopGame', {
+            bubbles: true,
+            cancelable: true,
+            detail: {distance: countDistance, coins: counterCollectedCoins, finalCounts: totalScore}
+        });
+        document.dispatchEvent(readFile);
+    }
+
+    /**
+     * Метод для генерации случайных значений в заданном диапазоне,
+     * необходим для случайного размещения объектов на карте
+     * @param min
+     * @param max
+     * @returns {number}
+     * @private
+     */
+    private _randomNumberGenerator(min: number, max: number): number {
         let rand = min - 0.5 + Math.random() * (max - min + 1);
         return Math.round(rand);
     }
