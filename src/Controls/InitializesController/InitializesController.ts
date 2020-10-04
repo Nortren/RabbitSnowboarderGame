@@ -10,6 +10,11 @@ interface IContainerOptions {
     texture: PIXI.Texture;
 }
 
+interface IResultGame {
+    finalCounts: number;
+    coins: number;
+    distance: number;
+}
 
 export default class InitializesController {
     /**
@@ -18,6 +23,7 @@ export default class InitializesController {
      */
 
     private _activeContainer = null;
+    private _gameContainer = null;
 
     public Init() {
         const optionsApplication = {
@@ -35,8 +41,7 @@ export default class InitializesController {
 
             this.canvasCenter = {centerX: this.rootContainerCenterX, centerY: this.rootContainerCenterY};
 
-            // this._activeContainer = this._createIntroContainer(this.rootContainerCenterX, this.rootContainerCenterY, resources);
-            this._activeContainer = this._createGameContainer(this.rootContainerCenterX, this.rootContainerCenterY, resources);
+            this._activeContainer = this._createIntroContainer(this.rootContainerCenterX, this.rootContainerCenterY, resources);
             this.app.stage.addChild(this._activeContainer);
         });
 
@@ -55,23 +60,158 @@ export default class InitializesController {
                 {width: 300, height: 300, positionX: 300, positionY: 50, texture: resources.sun.texture},
             ],
             dynamicObject: [
-                {width, height: 300, positionX: 0, positionY: 550, texture: resources.floor.texture, rotation: 0.1,type:'way'},
-                {width, height: 300, positionX: width, positionY: 678, texture: resources.floor.texture, rotation: 0.1,type:'way'},
-                {width: 500, height: 500, positionX: 0, positionY: 58, texture: resources.jumpboard.texture,rotation: 0.1,type:'singleObject'},
-                {width: 250, height: 150, positionX: 500, positionY: 58, texture: resources.airship.texture,rotation: 0.1,type:'singleObject'},
-                {width: 150, height: 100, positionX: width, positionY: height-95, texture: resources.stopper_idle.texture,rotation: 0.1,type:'pathElementCollider'},
+                {
+                    width,
+                    height: 300,
+                    positionX: 0,
+                    positionY: 550,
+                    texture: resources.floor.texture,
+                    rotation: 0.1,
+                    type: 'way'
+                },
+                {
+                    width,
+                    height: 300,
+                    positionX: width,
+                    positionY: 678,
+                    texture: resources.floor.texture,
+                    rotation: 0.1,
+                    type: 'way'
+                },
+                {
+                    width: 500,
+                    height: 500,
+                    positionX: 0,
+                    positionY: 58,
+                    texture: resources.jumpboard.texture,
+                    rotation: 0.1,
+                    type: 'singleObject'
+                },
+                {
+                    width: 250,
+                    height: 150,
+                    positionX: 500,
+                    positionY: 58,
+                    texture: resources.airship.texture,
+                    rotation: 0.1,
+                    type: 'singleObject'
+                },
+                {
+                    width: 150,
+                    height: 100,
+                    positionX: width+300,
+                    positionY: height - 95,
+                    texture: resources.stopper_idle.texture,
+                    rotation: 0.1,
+                    type: 'pathElementCollider'
+                },
                 // {width: 150, height: 100, positionX: width, positionY: height-95, texture: resources.stopper_crushed.texture,rotation: 0.1,type:'pathElementCollider'},
-                {width: 150, height: 100, positionX: width+750, positionY: 100, texture: resources.cloud_1.texture,rotation: 0.1,type:'pathElement'},
-                {width: 150, height: 100, positionX: width+450, positionY: 130, texture: resources.cloud_2.texture,rotation: 0.1,type:'pathElement'},
-                {width: 150, height: 100, positionX: width+850, positionY: 230, texture: resources.cloud_2.texture,rotation: 0.1,type:'pathElement'},
-                {width: 150, height: 100, positionX: width+100, positionY: 50, texture: resources.cloud_2.texture,rotation: 0.1,type:'pathElement'},
+                {
+                    width: 150,
+                    height: 100,
+                    positionX: width + 750,
+                    positionY: 100,
+                    texture: resources.cloud_1.texture,
+                    rotation: 0.1,
+                    type: 'pathElement',
+                    randomPosition: true
+                },
+                {
+                    width: 150,
+                    height: 100,
+                    positionX: width + 450,
+                    positionY: 130,
+                    texture: resources.cloud_2.texture,
+                    rotation: 0.1,
+                    type: 'pathElement',
+                    randomPosition: true
+                },
+                {
+                    width: 150,
+                    height: 100,
+                    positionX: width + 850,
+                    positionY: 230,
+                    texture: resources.cloud_2.texture,
+                    rotation: 0.1,
+                    type: 'pathElement',
+                    randomPosition: true
+                },
+                {
+                    width: 150,
+                    height: 100,
+                    positionX: width + 100,
+                    positionY: 50,
+                    texture: resources.cloud_2.texture,
+                    rotation: 0.1,
+                    type: 'pathElement',
+                    randomPosition: true
+                },
+                {
+                    width: 250,
+                    height: 300,
+                    positionX: width + 300,
+                    positionY: height - 300,
+                    texture: resources.street_tree.texture,
+                    rotation: 0.1,
+                    type: 'pathElement'
+                },
+                {
+                    width: 30,
+                    height: 30,
+                    positionX: 450,
+                    positionY: 490,
+                    texture: resources.collect_coin_icon.texture,
+                    type: 'coin'
+                },
+                {
+                    width: 30,
+                    height: 30,
+                    positionX: 150,
+                    positionY: 490,
+                    texture: resources.collect_coin_icon.texture,
+                    type: 'coin'
+                },
+                {
+                    width: 30,
+                    height: 30,
+                    positionX: 300,
+                    positionY: 490,
+                    texture: resources.collect_coin_icon.texture,
+                    type: 'coin'
+                }
             ],
             bunny: [
-                {width: 150, height: 150, positionX: 30, positionY: 460,texture: resources.bunny_move.texture,type:'playerAvatar'},
-                {width: 150, height: 150, positionX: 0, positionY: 58,texture: resources.bunny_jump.texture,type:'playerAvatar'}
-            ],
+                {
+                    width: 150,
+                    height: 150,
+                    positionX: 30,
+                    positionY: 460,
+                    texture: resources.bunny_move.texture,
+                    type: 'playerAvatar'
+                },
+                {
+                    width: 150,
+                    height: 150,
+                    positionX: 0,
+                    positionY: 58,
+                    texture: resources.bunny_jump.texture,
+                    type: 'playerAvatar'
+                }
+            ]
         };
 
+        const finalContainer = (events: CustomEvent) => {
+            const detail = events.detail;
+            const resultGame = {
+                finalCounts: detail.finalCounts,
+                coins: detail.coins,
+                distance: detail.distance
+            };
+            this._activeContainer = this._createFinalContainer(rootContainerCenterX, rootContainerCenterY, resources, resultGame);
+            this.app.stage.addChild(this._activeContainer);
+        };
+
+        document.addEventListener('stopGame', finalContainer.bind(this));
 
         const finalContainerContainerSettings = this._setContainerOptions(width, height, rootContainerCenterX, rootContainerCenterY, gameContainerTexture);
         const gameContainer = new GameContainer(finalContainerContainerSettings);
@@ -113,6 +253,15 @@ export default class InitializesController {
         /**
          * Функция переключения на контейнер с результатами игр
          */
+        const startGame = () => {
+            this.app.stage.removeChild(this._activeContainer);
+            this._activeContainer = this._createGameContainer(this.rootContainerCenterX, this.rootContainerCenterY, resources);
+            this.app.stage.addChild(this._activeContainer);
+        };
+
+        /**
+         * Функция переключения на контейнер с результатами игр
+         */
         const showLeadBoardContainer = () => {
             this.app.stage.removeChild(this._activeContainer);
             this._activeContainer = this._createLeaderBoardsContainer(rootContainerCenterX, rootContainerCenterY, resources);
@@ -124,15 +273,20 @@ export default class InitializesController {
          * Функция отображения контейнера завершения игры
          */
         const finalContainer = () => {
+            const resultGame = {
+                finalCounts: 999,
+                coins: 999,
+                distance: 999
+            };
             this.app.stage.removeChild(this._activeContainer);
-            this._activeContainer = this._createFinalContainer(rootContainerCenterX, rootContainerCenterY, resources);
+            this._activeContainer = this._createFinalContainer(rootContainerCenterX, rootContainerCenterY, resources, resultGame);
             this.app.stage.addChild(this._activeContainer);
         };
 
         const introContainerSettings = this._setContainerOptions(500, 610, rootContainerCenterX, rootContainerCenterY, introContainerTexture);
         const introContainer = new InformerContainer(introContainerSettings);
 
-        introContainer.uploadAuxiliaryButton(215, 125, 640, 500, introContainerTexture.play_button);
+        introContainer.uploadAuxiliaryButton(215, 125, 640, 500, introContainerTexture.play_button, false, startGame.bind(this));
         introContainer.uploadAuxiliaryButton(215, 125, 420, 500, introContainerTexture.leadboard, false, showLeadBoardContainer.bind(this));
         introContainer.uploadAuxiliaryButton(215, 125, 535, 260, introContainerTexture.login_button, false, finalContainer.bind(this));
         introContainer.uploadAuxiliaryUI(400, 70, 440, 400, introContainerTexture.user_name_bar);
@@ -149,7 +303,7 @@ export default class InitializesController {
      * @param resources
      * @returns {PIXI.Container}
      */
-    private _createFinalContainer(rootContainerCenterX, rootContainerCenterY, resources): PIXI.Container {
+    private _createFinalContainer(rootContainerCenterX, rootContainerCenterY, resources, resultGame: IResultGame): PIXI.Container {
         const finalContainerTexture = {
             info_plate_big: resources.info_plate_big.texture,
             ok_button: {
@@ -178,7 +332,7 @@ export default class InitializesController {
         const finalContainer = new InformerContainer(finalContainerContainerSettings);
 
         finalContainer.uploadAuxiliaryButton(145, 91, 565, 560, finalContainerTexture.ok_button, false, showIntroContainer.bind(this));
-        finalContainer.createFinalResult(55, finalContainerTexture.collect_coin_icon, 150, finalContainerTexture.collect_distance_icon, 300);
+        finalContainer.createFinalResult(resultGame.finalCounts, finalContainerTexture.collect_coin_icon, resultGame.coins, finalContainerTexture.collect_distance_icon, resultGame.distance);
         finalContainer.createHeaderInfo('You Score:', finalContainerTexture.header_info_plate);
         finalContainer.animationRayStart(finalContainerTexture, this.app, this.canvasCenter);
 
