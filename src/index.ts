@@ -1,6 +1,6 @@
 
 import InitializesController from './Controls/InitializesController/InitializesController'
-import '../src/componentsLibrary.css'
+import '../src/componentsLibrary.less'
 
 const informerContainer = new InitializesController();
 

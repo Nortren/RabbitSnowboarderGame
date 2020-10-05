@@ -45,10 +45,9 @@ module.exports = {
                 use: ["ts-loader"]
             },
             {
-                test: /\.css$/i,
-                use: [MiniCssExtractPlugin.loader, 'css-loader']
+                test: /\.less$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader','less-loader']
             },
-
             {
                 test: /\.(png|gif|jpe?g)$/,
                 use: [
@@ -62,7 +61,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
+                test:  /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
                 loader: 'url-loader?limit=30000&name=[name]-[hash].[ext]'
             }
         ]
